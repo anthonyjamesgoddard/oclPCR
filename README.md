@@ -7,4 +7,4 @@ C.
 
 IDEAS:
 
-  (1) Convert this to C++ using ocl wrapper
+    (1) Convert this to C++ using ocl wrapper
