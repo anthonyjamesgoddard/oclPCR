@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include<CL\cl.h>
+#include<CL/cl.h>
 
 cl_device_id create_device() {
 
@@ -16,7 +16,7 @@ cl_device_id create_device() {
 	size_t ComputeUnitCount, MaxWorkGroupSize;
 	size_t MaxWorkItemSizes[3] = { 0,0,0 };
 
-	platformchoice =1;
+	platformchoice =0;
 
 	/* Find out how many platforms there are */
 	err = clGetPlatformIDs(1, NULL, &num_platforms);

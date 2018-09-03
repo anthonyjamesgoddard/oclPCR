@@ -5,15 +5,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <CL\cl.h>     
+#include <CL/cl.h>     
 #include"OpenCLUtils.h"
 
 
 // Because we are working with tridiagonal matrices LOCAL_WORK_SIZE 
 // can be as large as 256. 
 
-#define N 256000000				/* N is the total number of entries for ALL systems */
-#define LOCAL_WORK_SIZE 256		/* This is the size of the systems (number of entries on main diagonal) */
+#define N 524288				/* N is the total number of entries for ALL systems */
+#define LOCAL_WORK_SIZE 512		/* This is the size of the systems (number of entries on main diagonal) */
 int log2(int n)
 {
 	int res = 0;
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 	}
 
 	// Obtain size of source file
-	FILE* fp = fopen("PCR.cl", "rb");
+	FILE* fp = fopen("ModifiedPCR.cl", "rb");
 	fseek(fp, 0, SEEK_END);
 	const size_t lSize = ftell(fp);
 	rewind(fp);
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
 	// Print the build log
 	printf("%s", buffer1);
 
-	clKernel = clCreateKernel(clProgram, "pcr", &errcode);
+	clKernel = clCreateKernel(clProgram, "modified_pcr", &errcode);
 
 	if (errcode < 0) {
 		perror("Kernel creation failed");
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
 
 	size_t localWorkSize = LOCAL_WORK_SIZE;
 	size_t globalWorkSize = N;
-	int iterations = log2((int)localWorkSize / 2);
+	int iterations = log2((int)localWorkSize / 2)-4;
 
 	/* Set the arguments for the kernel. */
 	errcode = clSetKernelArg(clKernel, 0, sizeof(cl_mem), (void *)&device_a);
@@ -218,14 +218,14 @@ int main(int argc, char** argv)
 	errcode = clEnqueueReadBuffer(clCommandQue,
 		device_x, CL_FALSE, 0, mem_size,
 		x, 0, NULL, &ev);
-
+/*
 	clWaitForEvents(1, &ev);
 
-	//for (i = 0; i < N; i++)
-	//{
-	//	printf("%f\n", x[i]);
-	//}
-
+	for (i = 0; i < N; i++)
+	{
+		printf("%f\n", x[i]);
+	}
+*/
 
 	printf("\nFinished Calculation.\n");
 
